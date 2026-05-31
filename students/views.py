@@ -100,6 +100,14 @@ class EnrollmentView(APIView):
             
 
         return JsonResponse({'message': 'Enrollment created'}, status=201)
+    
+    def get(self, request):
+        with connection.cursor() as cur:
+            cur.execute("SELECT * FROM enrollments")
+            cols = [col[0] for col in cur.description]
+            rows = [dict(zip(cols, row)) for row in cur.fetchall()]
+        return JsonResponse(rows, safe=False)
+    
 
 
 
