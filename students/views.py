@@ -103,7 +103,7 @@ class EnrollmentView(APIView):
     
     def get(self, request):
         with connection.cursor() as cur:
-            cur.execute("SELECT * FROM enrollments")
+            cur.execute("SELECT e.studentid,c.courseid,S.name as StudentName,C.coursename FROM enrollments AS e JOIN Students AS S ON e.studentid = S.studentid JOIN Courses AS C ON e.courseid = C.courseid")
             cols = [col[0] for col in cur.description]
             rows = [dict(zip(cols, row)) for row in cur.fetchall()]
         return JsonResponse(rows, safe=False)
