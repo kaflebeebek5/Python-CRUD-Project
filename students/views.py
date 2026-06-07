@@ -130,6 +130,50 @@ class SubjectView(APIView):
 
         return JsonResponse({'message': 'Subject created'}, status=201) 
 
+class ExamView(APIView):
 
+    # LIST  →  GET /api/exams/
+    def get(self, request):
+        with connection.cursor() as cur:
+            cur.execute("SELECT * FROM Exam") 
+            cols = [col[0] for col in cur.description]
+            rows = [dict(zip(cols, row)) for row in cur.fetchall()]
+        return JsonResponse(rows, safe=False) 
+    
+    def post(self, request):    
+        body = json.loads(request.body)
 
+        with connection.cursor() as cur:
+            cur.execute(
+                "INSERT INTO exam (ExamName) VALUES (%s)",
+                [body['ExamName']]
+            )
+            
+
+        return JsonResponse({'message': 'Exam record created'}, status=201) 
+    
+class StudentMarksView(APIView):
+
+    # RETRIEVE  →  GET /api/studentmarks/<id>/
+    # def get(self, request, studentid):
+    #     with connection.cursor() as cur:
+    #         cur.execute("SELECT * FROM StudentMarks WHERE studentid = %s", [studentid])
+    #         row = cur.fetchone()
+    #         if not row:
+    #             return JsonResponse({'error': 'Student marks not found'}, status=404)
+    #         cols = [col[0] for col in cur.description]
+    #         exam = dict(zip(cols, row))
+    #     return JsonResponse(exam)
+    
+    def post(self, request):
+        body = json.loads(request.body)
+
+        with connection.cursor() as cur:
+            cur.execute(
+                "INSERT INTO StudentMarks (studentid, subjectid, examid, marks) VALUES (%s, %s, %s, %s)",
+                [body['studentid'], body['subjectid'], body['examid'], body['marks']]
+            )
+            
+
+        return JsonResponse({'message': 'Student marks record created'}, status=201)
     
