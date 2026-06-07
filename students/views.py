@@ -108,6 +108,27 @@ class EnrollmentView(APIView):
             rows = [dict(zip(cols, row)) for row in cur.fetchall()]
         return JsonResponse(rows, safe=False)
     
+class SubjectView(APIView):
+
+    # LIST  →  GET /api/subjects/
+    def get(self, request):
+        with connection.cursor() as cur:
+            cur.execute("SELECT * FROM Subject") 
+            cols = [col[0] for col in cur.description]
+            rows = [dict(zip(cols, row)) for row in cur.fetchall()]
+        return JsonResponse(rows, safe=False) 
+    
+    def post(self, request):    
+        body = json.loads(request.body)
+
+        with connection.cursor() as cur:
+            cur.execute(
+                "INSERT INTO subject (subjectname) VALUES (%s)",
+                [body['subjectname']]
+            )
+            
+
+        return JsonResponse({'message': 'Subject created'}, status=201) 
 
 
 
